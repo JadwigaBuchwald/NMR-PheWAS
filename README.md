@@ -11,6 +11,7 @@
 #--------------Data Wrangling----------------------
 
 #a_DATA_WRANGLING/FINEMAP
+
 	A) Downloading finemap: A_Downloading_finemap_v1.4.sh
 	B) Obtaining a list of the rsids that were present in our FRYFS Finemapping analysis (2.5Mb flanks on both sides of the top SNP): B_FRYFS_zRSIDs.sh
 
@@ -23,6 +24,7 @@
 	
 
 #a_DATA_WRANGLING/GRS/WhiteBritish
+
 	1a) Extract the wanted top config SNPs (nine of them): 1a_extractgen_chr19topconfig.sh & rsidlist.txt
 	1b) Getting chr4 SNP and top SNP genotype data from the bgen files using qctool v2: 1b_GenFromBgen_chr4andTopSNP.sh & GRS_chr4SNP_rsid.txt & rs56113850.txt 
 	2) Converting gen files to dosage format: 2_gentodosage.R & GenotypeFileConversion.R
@@ -75,6 +77,7 @@
 	3) Modelling CPD by GS, and comparison of slower vs faster metabolizers: ModelCPDbyzGRS.R
 
 #--------------FIGURES----------------------
+
 	1) Scatter plot of GRS and Top SNP: F_Scatter_GS_TopSNP_locally.R
 	2) Loess plots for main text and loess + scatterplots for supplemenetary material: F_Loess.R
 	3) Current vs Former forest plot: F_CurrentFormer_ForestPlot.R
