@@ -1,0 +1,2 @@
+CHR	RSID	BP	Major_Minor	maf	b_minor	se	p	PVE	dbSNP_Gene_and_Location	dbSNP_Functional_Consequence	eQTL	meQTL
+4	rs36103218	69359253	T/C	0.430	0.175	0.025	1.26E-12	0.015	TMPRSS11E	intron variant	UGT2B15, UGT2B17, UGT2B29P, RP11-1267H10.2, RP11-1267H10.1	None
