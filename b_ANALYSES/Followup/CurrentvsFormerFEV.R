@@ -8,8 +8,8 @@
 
 #Doing this interactively
 
-#cd /[path]/PHESANT/PHEWAS_2Stage/FDR_final
-#RDir="/[path]/"
+#cd /[PATH]/PHESANT/PHEWAS_2Stage/FDR_final
+#RDir="/[PATH]/"
 #${RDir}R-4.1.1/bin/R
 
 
@@ -18,11 +18,10 @@
 #-----------------------------------
 
 #---------------------------------
-#Not for Github:
 
-DataDir="/[path]/Phenotypes/DataWrangling/Extracting_ALL/"
-WorkDir="/[path]/PHESANT/PHEWAS_2Stage"
-TraitDir="/[path]/PHESANT/TRAIT/"
+DataDir="/[PATH]/Phenotypes/DataWrangling/Extracting_ALL/"
+WorkDir="/[PATH]/PHESANT/PHEWAS_2Stage"
+TraitDir="/[PATH]/PHESANT/TRAIT/"
 
 #----------------------------------
 

@@ -32,7 +32,7 @@
 #----------------------------------------------------------------------
 
 #cd /[PATH]/ukbb/jadwiga/MRBaseandFinnGen
-#RDir="/apps/statistics2/"
+#RDir="/[PATH]/"
 #${RDir}R-4.1.1/bin/R
 
 

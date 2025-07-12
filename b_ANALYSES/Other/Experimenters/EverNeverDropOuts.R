@@ -125,7 +125,7 @@ getwd()
 
 
 	#B) Getting the GRS data
-		G<-read.csv("/fs/projects/ukbb/jadwiga/GRS/WhiteBritish/GRS9_topconfig/topconfigalleleA_GRS_topSNPCiealleleB.txt",as.is=T, header=T,sep="\t")
+		G<-read.csv("/[Path]/GRS/WhiteBritish/GRS9_topconfig/topconfigalleleA_GRS_topSNPCiealleleB.txt",as.is=T, header=T,sep="\t")
 		dim(G)
 		#[1] 343662     14
 			#Keeping the wanted variables

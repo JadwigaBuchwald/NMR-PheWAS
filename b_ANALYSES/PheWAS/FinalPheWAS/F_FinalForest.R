@@ -3,6 +3,8 @@
 #Jadwiga Buchwald
 
 #These were run locally using RStudio
+#R version 4.1.1 (2021-08-10) -- "Kick Things"
+
 
 #----------------------------------------------------
 #Drawing forest plots using nightingale's ggforestplot:
@@ -13,20 +15,20 @@
 #Libraries:
 #-----------------
 
-setwd("C:/LocalData/jadwigab/PhD_FIMM/PhD_Analysis/6_PheWAS/Phewas_PHESANT/Phewas2Stages")
+setwd("[PATH]/Phewas_PHESANT/Phewas2Stages")
 
 #install.packages("devtools")
 library(devtools)
 
-#install.packages("ggforestplot") #Did not work now taht i updated R
-#devtools::install_github("NightingaleHealth/ggforestplot")
+#install.packages("ggforestplot") 
+#devtools::install_github("NightingaleHealth/ggforestplot") #if the above doesn't work
 library(ggforestplot)
 
 #install.packages("tidyverse")
 library(tidyverse)
 library(plyr)
 library(dplyr)
-#?ggforestplot::forestplot
+#?ggforestplot::forestplot #checking the help page
 
 #----------------------------------------------------
 
@@ -39,13 +41,6 @@ library(dplyr)
 #Starting with the Binary variables.
 #-------------------------------------------------------------------------
 
-#Note with the Binary variables it looked like it would make most sense to show the FDR sig results all in one plot in the main text and then have
-#in the supplementary all the variables in two plots so that the scale is more readable and the original Cat3_Title has been kept more intact.
-
-#I'll plot four plots:  
-#A) v1 one with all variables in one plot v2 all variables that were FDR sig in one or more groups 
-#b) two plots so that the scale is more suited for the given variables & again  v1 all v2 only those with FDR sig in one or more dataset
-
   B<-read.table("./Final_25_BinaryForest.txt", sep="\t",header=TRUE)
   str(B)
   dim(B) #66 x 9
@@ -53,10 +48,8 @@ library(dplyr)
 #Renaming the data variable with a capital letter so that it looks better in the plot.
   names(B)[names(B)=="data"]<-"Data"
 
-
-#I'll start by plotting Av1 &  Av2
-
-  #Checking our Cat3_Title is sensible
+#Forming sensible categories for the variables
+  #Checking the current categories: Cat3_Title 
     table(B$Cat3_Title)
     #Early life factors Health and medical history  Lifestyle and environment        Medical information                Medications                 Operations       Psychosocial factors 
     #3                          6                         30                          2                          4                          3                          3 
@@ -64,114 +57,135 @@ library(dplyr)
     #15
 
 #I'll rename some of the categories so that we have a few less in order to make a prettier plot
-#Renaming Summary Operations as Operations so that it is less confusing and we get the Leg artery bypass surgery in the right plot.
-#Renaming Medical information as Lifestyle and environment
-#Renaming Medications as Health and medical history
+  #Renaming Summary Operations as Operations so that it is less confusing and we get the Leg artery bypass surgery in the right category.
+  #Renaming Medical information as Lifestyle and environment
+  #Renaming Medications as Health and medical history
   B$Cat3_Title<-recode(B$Cat3_Title, "Summary Operations" = "Operations", "Medical information" = "Lifestyle and environment", "Medications"="Health and medical history")
 
   table(B$Cat3_Title)
   #Early life factors Health and medical history  Lifestyle and environment                 Operations       Psychosocial factors 
   #3                         10                         32                         18                          3 
 
-  #V1: All variables
-    ggforestplot::forestplot(
-      df = B,
-      name = Phenotype,
-      estimate = beta,
-      se = se,
-      colour= Data,
-      pvalue = NotFDRsig,
-      psignif = 0.05,
-      xlab = "OR \n Odds ratio for phenotype (95 % CI) \n per 1-SD increment in the GRS of the NMR",
-      title = "Logistic regression",
-      logodds = TRUE
-    )+
-      ggforce::facet_col(
-        facets = ~Cat3_Title,
-        scales = "free_y",
-        space = "free"
-      ) 
 
-  #V2: Only those with a FDR sig result in one of the groups
+    
+  # Plotting only those with a FDR sig result in one of the groups(Ever/Never/All)
+
       #List of variables we want
       keepers <- unique(subset(B,B$NotFDRsig==0)[,c("Phenotype")])
       length(keepers) #16 
       length(unique(B$Phenotype)) #all in all 25 so 25-16=9 that were not FDR sig in any group
       Sigset <- subset(B, B$Phenotype %in% keepers)
 
-          #V2: FDR sig variables
-          ggforestplot::forestplot(
-            df = Sigset,
+#          # FDR sig variables : Simple plot (all on the same scale which makes the plot difficult to read)
+#          ggforestplot::forestplot(
+#            df = Sigset,
+#            name = Phenotype,
+#            estimate = beta,
+#            se = se,
+#            colour= Data,
+#            pvalue = NotFDRsig,
+#            psignif = 0.05,
+#            xlab = "OR \n Odds ratio for phenotype (95 % CI) \n per 1-SD increment in the GRS of the NMR",
+#            title = "Logistic regression",
+#            logodds = TRUE
+#          )+
+#            ggforce::facet_col(
+#              facets = ~Cat3_Title,
+#              scales = "free_y",
+#              space = "free"
+#            ) 
+          
+          
+          #-->Note we have 16 variables
+          
+#Fixing the scale
+          #Creating two Health and medical history categories to get the scales nicely:
+          Sigset$Cat3_Title_scale<-ifelse(Sigset$Phenotype=="20003#1140867092 - Serenace medication","Medical information", Sigset$Cat3_Title)
+          table(Sigset$Cat3_Title_scale)
+          
+		  
+#Creating two seperate plots and the legend seperately and then combining them into one
+          
+        #First part of the plot and title
+         Big<-subset(Sigset,!(Sigset$Cat3_Title_scale %in% c("Operations","Medical information")))
+          
+         p1<- ggforestplot::forestplot(
+            df = Big,
             name = Phenotype,
             estimate = beta,
             se = se,
             colour= Data,
             pvalue = NotFDRsig,
             psignif = 0.05,
-            xlab = "OR \n Odds ratio for phenotype (95 % CI) \n per 1-SD increment in the GRS of the NMR",
+            xlab = " ",
             title = "Logistic regression",
             logodds = TRUE
           )+
             ggforce::facet_col(
-              facets = ~Cat3_Title,
+              facets = ~Cat3_Title_scale,
               scales = "free_y",
               space = "free"
-            ) 
-      
-      
-#Then to Bv1 and Bv2
-      B<-read.table("./Final_25_BinaryForest.txt", sep="\t",header=TRUE)
-      str(B)
-      dim(B) #66 x 9
-      
-      #Renaming the data variable with a capital letter so that it looks better in the plot.
-      names(B)[names(B)=="data"]<-"Data"
-      
-      
-#Plotting Medication+operations in one plot and the rest in another
+            ) + theme(legend.position = "none",axis.title.x=element_blank())
+          
+          
+        #Second part of the plot without the title
+         Small<-subset(Sigset,Sigset$Cat3_Title_scale %in% c("Operations","Medical information"))
+         p2<- ggforestplot::forestplot(
+            df = Small,
+            name = Phenotype,
+            estimate = beta,
+            se = se,
+            colour= Data,
+            pvalue = NotFDRsig,
+            psignif = 0.05,
+            xlab = "OR \n Odds ratio for phenotype (95 % CI) \n per 1-SD increment in the GS of the NMR",
+            #title = "Logistic regression",
+            logodds = TRUE
+          )+
+            ggforce::facet_col(
+              facets = ~Cat3_Title_scale,
+              scales = "free_y",
+              space = "free"
+            ) + theme(legend.position = "none")
+     
+         
+         #Legend
+         
+         #In order to get the legend I need the package cowplot
+         #Note, had trouble loading cowplot to R 4.1.1 but I already had it for 4.2.2
+          custom_library <- "C:/rlibs/4.2.2"
+          #Note i want this folder to be the last option
+          .libPaths(c(.libPaths(),custom_library))
+          #install.packages("cowplot")
+          library(cowplot)
+          
+          legend <- get_legend(ggforestplot::forestplot(
+            df = Small,
+            name = Phenotype,
+            estimate = beta,
+            se = se,
+            colour= Data,
+            pvalue = NotFDRsig,
+            psignif = 0.05,
+            xlab = "OR \n Odds ratio for phenotype (95 % CI) \n per 1-SD increment in the GS of the NMR",
+            #title = "Logistic regression",
+            logodds = TRUE
+          )+
+            ggforce::facet_col(
+              facets = ~Cat3_Title_scale,
+              scales = "free_y",
+              space = "free"
+            ))
 
-  B$Cat3_Title<-recode(B$Cat3_Title, "Summary Operations" = "Operations", "Medical information" = "Lifestyle and environment")
+          
+        #Combining and placing legend at the middle on the right. 
+         main<-plot_grid(p1, p2, ncol=1, align='v')
+         ggdraw(plot_grid(main,legend, ncol=2, rel_widths=c(1, 0.2)))
+                
 
-  One<-subset(B,B$Cat3_Title %in% c("Medications","Operations"))
-  Two<-subset(B,!(B$Cat3_Title %in% c("Medications","Operations")))
-
-    ggforestplot::forestplot(
-      df = One,
-      name = Phenotype,
-      estimate = beta,
-      se = se,
-      colour= Data,
-      pvalue = NotFDRsig,
-      psignif = 0.05,
-      xlab = "OR \n Odds ratio for phenotype (95 % CI) \n per 1-SD increment in the GRS of the NMR",
-      title = "Logistic regression (1/2)",
-      logodds = TRUE
-    )+
-      ggforce::facet_col(
-        facets = ~Cat3_Title,
-        scales = "free_y",
-        space = "free"
-      ) 
-    
-    
-    ggforestplot::forestplot(
-      df = Two,
-      name = Phenotype,
-      estimate = beta,
-      se = se,
-      colour= Data,
-      pvalue = NotFDRsig,
-      psignif = 0.05,
-      xlab = "OR \n Odds ratio for phenotype (95 % CI) \n per 1-SD increment in the GRS of the NMR",
-      title = "Logistic regression (2/2)",
-      logodds = TRUE
-    )+
-      ggforce::facet_col(
-        facets = ~Cat3_Title,
-        scales = "free_y",
-        space = "free"
-      ) 
-    
+         ggsave(
+           "./Plots/Logistic_ForestPlot_GS_ggsave.pdf"
+         ) 
 
 #-------------------------------------------------------------------------------
 #   Ordinal variables
@@ -184,6 +198,7 @@ library(dplyr)
     #two had their sign changed:3506 smoking compare to 10 yrs previous & 1249 Past tobacco smoking 
     #Note: I checked the coding for 1239 Current tobacco smoking coding and PHESANT has already corrected it!
 
+    #Reading in the data:     
     O<-read.table("./Final_8_OrderedLogisticForest.txt", sep="\t",header=TRUE)
     str(O)
     dim(O) #20 x 9
@@ -191,7 +206,7 @@ library(dplyr)
     #Renaming the data variable with a capital letter so that it looks better in the plot.
     names(O)[names(O)=="data"]<-"Data"
     
-    
+    #Plotting the forestplot
     ggforestplot::forestplot(
       df = O,
       name = Phenotype,
@@ -200,7 +215,7 @@ library(dplyr)
       colour= Data,
       pvalue = NotFDRsig,
       psignif = 0.05,
-      xlab = "OR \n Odd ratio for one increment in phenotype category \n per 1-SD increment in the GRS of the NMR",
+      xlab = "OR \n Odds ratio for one increment in phenotype category \n per 1-SD increment in the GS of the NMR",
       title = "Ordered logistic regression",
       logodds = TRUE
     )+
@@ -211,6 +226,10 @@ library(dplyr)
       ) 
     
     
+    #Saving the plot
+    ggsave(
+      "./Plots/Ordinal_ForestPlot_GS_ggsave.pdf"
+    )  
     
     
     
@@ -220,15 +239,18 @@ library(dplyr)
 # Linear variables
 #-------------------------------------------------------------------------
 
-#NOTE THESE LINES HAVE TO BE UPDATED ONCE I'VE MANAGED TO UPDATE THE SCRIPTS ON FS/PROJECTS    
+  #Reading in the data
     L<-read.table("./Final_38_LinearForest.txt", sep="\t",header=TRUE)
     str(L)
     dim(L) #117 x 9
-    
+        
     #Renaming the data variable with a capital letter so that it looks better in the plot.
     names(L)[names(L)=="data"]<-"Data"
 
-#Deleting the few extra rows (this step is not needed once the data has been corrected)
+  #Note: When creating the data for the forest plot, I had managed to introduce some false lines as I had 
+    #merged a datafile RESULTS with FOREST using varName (1498 for both coffee excluding decaf and including decaf)
+  #THUS: Deleting the few extra rows 
+    #Checking the values coffee excluding/including decaf should have from the results table:
     R<-read.table("./Final_38_LinearResults.txt", sep="\t",header=TRUE)
     str(R)
     dim(R) #38 x 30
@@ -238,6 +260,7 @@ library(dplyr)
 #    27 nd1498 - Coffee quantity (excluding decaf) 0.01335725 0.01474301 0.013847260
 #    28 nd1498 - Coffee quantity (including decaf) 0.01061656 0.01354754 0.008206222
 
+    #Seeing which rows are to be kept and which deleted from our data for plotting the forest plot
     subset(L, L$Phenotype %in% c("nd1498 - Coffee quantity (excluding decaf)", "nd1498 - Coffee quantity (including decaf)")) [,c("Phenotype","beta", "Data")]
 #    Phenotype        beta  Data
 # keepers:
@@ -273,27 +296,9 @@ library(dplyr)
  
     L<-OK   
              
-    #v1 all variables
-    ggforestplot::forestplot(
-      df = L,
-      name = Phenotype,
-      estimate = beta,
-      se = se,
-      colour= Data,
-      pvalue = NotFDRsig,
-      psignif = 0.05,
-      xlab = "Beta \n 1-SD increment in phenotype per 1-SD increment in the GRS of the NMR",
-      title = "Linear Regression",
-      logodds = FALSE
-    )+
-      ggforce::facet_col(
-        facets = ~Cat3_Title,
-        scales = "free_y",
-        space = "free"
-      ) 
- 
     
-    #V2: Only those with a FDR sig result in one of the groups
+    
+    # Only those with a FDR sig result in one of the groups
     #List of variables we want
     keepers <- unique(subset(L,L$NotFDRsig==0)[,c("Phenotype")])
     length(keepers) #33
@@ -309,7 +314,7 @@ library(dplyr)
       colour= Data,
       pvalue = NotFDRsig,
       psignif = 0.05,
-      xlab = "Beta \n 1-SD increment in phenotype per 1-SD increment in the GRS of the NMR",
+      xlab = "Beta \n 1-SD increment in phenotype \n per 1-SD increment in the GS of the NMR",
       title = "Linear Regression",
       logodds = FALSE
     )+
@@ -319,49 +324,7 @@ library(dplyr)
         space = "free"
       ) 
     
+    ggsave(
+      "./Plots/Linear_ForestPlot_GS_ggsave.pdf"
+    ) 
 
-#The below plots were not 
-    
-    #Creating two plots: to get a more readable scaling
-
- 
-    One<-subset(L,!(L$Cat3_Title %in% c("Blood assays", "Lifestyle and environment")))
-    Two<-subset(L,L$Cat3_Title %in% c("Blood assays", "Lifestyle and environment"))
-       
-    ggforestplot::forestplot(
-      df = One,
-      name = Phenotype,
-      estimate = beta,
-      se = se,
-      colour= Data,
-      pvalue = NotFDRsig,
-      psignif = 0.05,
-      xlab = "Beta \n 1-SD increment in phenotype per 1-SD increment in the GRS of the NMR",
-      title = "Linear Regression (1/2)",
-      logodds = FALSE
-    )+
-      ggforce::facet_col(
-        facets = ~Cat3_Title,
-        scales = "free_y",
-        space = "free"
-      ) 
-    
-    ggforestplot::forestplot(
-      df = Two,
-      name = Phenotype,
-      estimate = beta,
-      se = se,
-      colour= Data,
-      pvalue = NotFDRsig,
-      psignif = 0.05,
-      xlab = "Beta \n 1-SD increment in phenotype per 1-SD increment in the GRS of the NMR",
-      title = "Linear Regression (2/2)",
-      logodds = FALSE
-    )+
-      ggforce::facet_col(
-        facets = ~Cat3_Title,
-        scales = "free_y",
-        space = "free"
-      ) 
-    
-    

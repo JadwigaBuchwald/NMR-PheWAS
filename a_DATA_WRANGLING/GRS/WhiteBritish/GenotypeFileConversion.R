@@ -8,7 +8,7 @@
 #-----------------------------------------------------------------------
 
 #FUNCTIONS:
-#source("/fs/projects/ukbb/jadwiga/RFunctions/GenotypeFileConversion.R")
+#source("/[path]/RFunctions/GenotypeFileConversion.R")
 
 #Top SNP
 #GenToDosage(Genin="rs56113850_inclusionsample.gen", Samplein="rs56113850_inclusionsample.sample", Dosageout="rs56113850_dosage")

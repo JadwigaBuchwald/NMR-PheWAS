@@ -5,12 +5,12 @@
 #3) For those variables that had a p<0.05 for the difference we plot the forest plot.    
 
 
-# cd /fs/projects/ukbb/jadwiga/PHESANT/SECONDARY
-# RDir="/apps/statistics2/"
+# cd /[PATH]/PHESANT/SECONDARY
+# RDir="/[PATH]/"
 # ${RDir}R-4.1.1/bin/R
 
- setwd("/fs/projects/ukbb/jadwiga/PHESANT/SECONDARY")
- DataDir="/fs/projects/ukbb/jadwiga/Phenotypes/DataWrangling/Extracting_ALL/"
+ setwd("/[PATH]/PHESANT/SECONDARY")
+ DataDir="/[PATH]/Phenotypes/DataWrangling/Extracting_ALL/"
 
 
 sessionInfo()

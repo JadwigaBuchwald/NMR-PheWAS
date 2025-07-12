@@ -1,6 +1,6 @@
 #26.6.2023
 
-#Fig. S3 Scatterplot of the imputed genotype dosage at the chromosome 19 top SNP (rs56113850) against the GS for the NMR in UKB.
+#Fig. Scatterplot of the imputed genotype dosage at the chromosome 19 top SNP (rs56113850) against the GS for the NMR in UKB.
 
 #These were run locally using RStudio
 
@@ -154,4 +154,4 @@ library(grid)
               base_aspect_ratio = 1.3 #default is 1.1. which works well, when we don't have a legend, each individual subplot should have an aspect ratio of 1.3
     )
         
-#Note: used to be fig S1 when I created the script but ended up being Fig S3.
+#Note: used to be fig S1 when I created the script
