@@ -9,6 +9,7 @@ Scripts accompanying https://doi.org/10.1101/2023.12.22.23300430
 #--------------Data Wrangling----------------------
 
 #a_DATA_WRANGLING/FINEMAP
+
 	A) Downloading finemap: A_Downloading_finemap_v1.4.sh
 	B) Obtaining a list of the rsids that were present in our FRYFS Finemapping analysis (2.5Mb flanks on both sides of the top SNP): B_FRYFS_zRSIDs.sh
 
@@ -21,6 +22,7 @@ Scripts accompanying https://doi.org/10.1101/2023.12.22.23300430
 	
 
 #a_DATA_WRANGLING/GRS/WhiteBritish
+
 	1a) Extract the wanted top config SNPs (nine of them): 1a_extractgen_chr19topconfig.sh & rsidlist.txt
 	1b) Getting chr4 SNP and top SNP genotype data from the bgen files using qctool v2: 1b_GenFromBgen_chr4andTopSNP.sh & GRS_chr4SNP_rsid.txt & rs56113850.txt 
 	2) Converting gen files to dosage format: 2_gentodosage.R & GenotypeFileConversion.R
